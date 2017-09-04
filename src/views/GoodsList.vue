@@ -100,8 +100,8 @@
     </div>
 </template>
 <script>
-import '@/assets/styles/base.css'
-import '@/assets/styles/product.css'
+// import '@/assets/styles/base.css'
+// import '@/assets/styles/product.css'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
 import NavBread from '@/components/NavBread'
