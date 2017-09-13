@@ -1,7 +1,7 @@
-var mongoose = require('mongoose')
-var Schema = mongoose.Schema
+let mongoose = require('mongoose')
+let Schema = mongoose.Schema
 // 创建数据模型
-var productSchema = new Schema({
+let productSchema = new Schema({
     'productId': String,
     'productName': String,
     'salePrice': Number,

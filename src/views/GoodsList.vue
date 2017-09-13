@@ -22,7 +22,7 @@
                         <dl class="filter-price">
                             <dt>Price:</dt>
                             <dd>
-                                <a href="javascript:void(0)" :class="{cur:curFliterIndex=='all'}" @click="curFliterIndex='all'">All</a>
+                                <a href="javascript:void(0)" :class="{cur:curFliterIndex=='all'}" @click="curSelect('all')">All</a>
                             </dd>
                             <dd v-for="(item,index) in priceFilter" :key="item.startPrice" @click="curSelect(index)">
                                 <a :class="{cur:index==curFliterIndex}" href="javascript:void(0)">{{item.startPrice}} - {{item.endPrice}}</a>
@@ -46,7 +46,9 @@
                                     </div>
                                 </li>
                             </ul>
-                            <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">加载中...</div>
+                            <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30">
+                                <img src="../../static/loading-svg/loading-cubes.svg" alt="" v-show="loading">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,6 +73,8 @@ export default {
             page: 1,
             pageSize: 8,
             busy: true,
+            loading: false,
+            priceLevel: 'all',
             priceFilter: [
                 {
                     startPrice: '0.00',
@@ -83,10 +87,10 @@ export default {
                     endPrice: '1000.00'
                 }, {
                     startPrice: '1000.00',
-                    endPrice: '2000.00'
+                    endPrice: '5    000.00'
                 }
             ],
-            curFliterIndex: '',
+            curFliterIndex: 'all',
             isShowFilter: false
         }
     },
@@ -103,16 +107,19 @@ export default {
             let param = {
                 page: this.page,
                 pageSize: this.pageSize,
-                sort: this.sortFlag ? 1 : -1
+                sort: this.sortFlag ? 1 : -1,
+                priceLevel: this.priceLevel
             }
+            this.loading = true
             axios.get('/goods', {
                 params: param
             }).then((result) => {
+                this.loading = false
                 let res = result.data
                 if (res.status === '0') {
                     if (flag) {
                         this.goodsList = this.goodsList.concat(res.result.list)
-                        if (res.result.count === 0) {
+                        if (res.result.count === 0 || res.result.count < this.pageSize) {
                             this.busy = true
                         } else {
                             this.busy = false
@@ -139,7 +146,10 @@ export default {
         },
         curSelect(index) {
             this.curFliterIndex = index
+            this.priceLevel = index
+            this.page = 1
             this.isShowFilter = false
+            this.getGoodsList()
         },
         showFilter() {
             this.isShowFilter = true
