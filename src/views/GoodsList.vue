@@ -41,7 +41,7 @@
                                         <div class="name">{{ item.productName }}</div>
                                         <div class="price">{{ item.salePrice }}</div>
                                         <div class="btn-area">
-                                            <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                                            <a href="javascript:;" class="btn btn--m" @click="saveToChart(item.productId)">加入购物车</a>
                                         </div>
                                     </div>
                                 </li>
@@ -150,6 +150,17 @@ export default {
             this.page = 1
             this.isShowFilter = false
             this.getGoodsList()
+        },
+        saveToChart(productId) {
+            axios.post('/goods/addCart', {
+                'productId': productId
+            }).then((res) => {
+                if (res.status === '0') {
+                    alert('成功!')
+                } else {
+                    alert('成功!')
+                }
+            })
         },
         showFilter() {
             this.isShowFilter = true

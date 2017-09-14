@@ -6,17 +6,17 @@ let Users = require('../models/users.js')
 // 连接mongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/test')
 // 监听反馈连接状态
-mongoose.connection.on('connected', function() {
+mongoose.connection.on('connected', function () {
     console.log('MongoDB connect success')
 })
-mongoose.connection.on('error', function() {
+mongoose.connection.on('error', function () {
     console.log('MongoDB connect fail')
 })
-mongoose.connection.on('disconnected', function() {
+mongoose.connection.on('disconnected', function () {
     console.log('MongoDB connect disconnected')
 })
 
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     let page = parseInt(req.param('page'))
     let pageSize = parseInt(req.param('pageSize'))
     let priceLevel = req.param('priceLevel')
@@ -52,8 +52,8 @@ router.get('/', function(req, res, next) {
         }
     }
     let goodsModel = Goods.find(params).skip(skip).limit(pageSize)
-    goodsModel.sort({'salePrice': sort})
-    goodsModel.exec(function(err, doc) {
+    goodsModel.sort({ 'salePrice': sort })
+    goodsModel.exec(function (err, doc) {
         if (err) {
             res.json({
                 status: '1',
@@ -72,16 +72,72 @@ router.get('/', function(req, res, next) {
     })
 })
 
-router.get('/addCart', function(req, res, next) {
+router.post('/addCart', function (req, res, next) {
     let userId = '100000077'
-    Users.findOne({'userId': userId}, function(err, doc) {
+    let productId = req.body.productId
+    Users.findOne({ 'userId': userId }, function (err, userdoc) {
         if (err) {
             res.json({
                 status: '1',
                 msg: err.message
             })
         } else {
-            res.send(doc)
+            if (userdoc) {
+                let goodItem = ''
+                userdoc.cartList.forEach((item, index) => {
+                    if (item.productId = productId) {
+                        goodItem = item
+                        item.productNum++
+                    }
+                })
+                if (goodItem) {
+                    userdoc.save(function (saveErr, saveDoc) {
+                        if (saveErr) {
+                            res.json({
+                                status: '1',
+                                msg: saveErr.message
+                            })
+                        } else {
+                            res.json({
+                                status: '0',
+                                msg: '',
+                                result: 'success'
+                            })
+                        }
+                    })
+                } else {
+                    Goods.findOne({ 'productId': productId }, function (err, doc) {
+                        if (err) {
+                            res.json({
+                                status: '1',
+                                msg: err.message
+                            })
+                        } else {
+                            if (doc) {
+                                doc._doc.productNum = 1
+                                doc._doc.checked = 1
+                                userdoc.cartList.push(doc)
+                                userdoc.save(function (saveErr, saveDoc) {
+                                    if (saveErr) {
+                                        res.json({
+                                            status: '1',
+                                            msg: saveErr.message
+                                        })
+                                    } else {
+                                        res.json({
+                                            status: '0',
+                                            msg: '',
+                                            result: 'success'
+                                        })
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+
+            // res.send(doc)
         }
     })
 })
