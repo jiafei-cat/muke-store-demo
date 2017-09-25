@@ -55,6 +55,14 @@
             </div>
         </div>
         <div class="md-overlay" v-show="isShowFilter" @click="closeFilter"></div>
+        <modal :mdShow="mdShow">
+            <p slot="message">
+                请先登录，否则无法加入购物车!
+            </p>
+            <div slot="btnGroup">
+                <a class="btn btn--m">关闭</a>
+            </div>
+        </modal>
         <nav-footer></nav-footer>
     </div>
 </template>
@@ -64,6 +72,7 @@ import '@/assets/styles/product.css'
 import NavHeader from '@/components/NavHeader'
 import NavFooter from '@/components/NavFooter'
 import NavBread from '@/components/NavBread'
+import Modal from '@/components/Modal'
 import axios from 'axios'
 export default {
     data() {
@@ -97,7 +106,8 @@ export default {
     components: {
         NavHeader,
         NavFooter,
-        NavBread
+        NavBread,
+        Modal
     },
     mounted() {
         this.getGoodsList()
@@ -111,7 +121,7 @@ export default {
                 priceLevel: this.priceLevel
             }
             this.loading = true
-            axios.get('/goods', {
+            axios.get('/goods/list', {
                 params: param
             }).then((result) => {
                 this.loading = false
@@ -158,7 +168,7 @@ export default {
                 if (res.status === '0') {
                     alert('成功!')
                 } else {
-                    alert('成功!')
+                    alert(res.data.msg)
                 }
             })
         },
