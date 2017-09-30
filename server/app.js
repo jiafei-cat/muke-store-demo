@@ -24,10 +24,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 // 根据cookies判断是否登陆
 app.use(function(req, res, next) {
-
   if(req.cookies.userId) {
     next()
   } else {
