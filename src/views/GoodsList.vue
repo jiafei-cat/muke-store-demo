@@ -55,12 +55,24 @@
             </div>
         </div>
         <div class="md-overlay" v-show="isShowFilter" @click="closeFilter"></div>
-        <modal :mdShow="mdShow">
+        <modal :mdShow="mdShow" @close="closeModal">
             <p slot="message">
                 请先登录，否则无法加入购物车!
             </p>
             <div slot="btnGroup">
-                <a class="btn btn--m">关闭</a>
+                <a class="btn btn--m" @click="mdShow = false">关闭</a>
+            </div>
+        </modal>
+        <modal :mdShow="mdShowCart" @close="closeModal">
+            <p slot="message">
+                <svg class="icon-status-ok">
+                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+                </svg>
+                <span>加入购物车成功!</span>
+            </p>
+            <div slot="btnGroup">
+                <a class="btn btn--m" href="javascript:;" @click="mdShowCart = false">继续购物</a>
+                <router-link class="btn btn--m" href="javascript:;" to="/chart">查看购物车</router-link>
             </div>
         </modal>
         <nav-footer></nav-footer>
@@ -84,6 +96,8 @@ export default {
             busy: true,
             loading: false,
             priceLevel: 'all',
+            mdShow: false,
+            mdShowCart: false,
             priceFilter: [
                 {
                     startPrice: '0.00',
@@ -165,10 +179,10 @@ export default {
             axios.post('/goods/addCart', {
                 'productId': productId
             }).then((res) => {
-                if (res.status === '0') {
-                    alert('成功!')
+                if (res.data.status === '0') {
+                    this.mdShowCart = true
                 } else {
-                    alert(res.data.msg)
+                    this.mdShow = true
                 }
             })
         },
@@ -177,6 +191,10 @@ export default {
         },
         closeFilter() {
             this.isShowFilter = false
+        },
+        closeModal() {
+            this.mdShow = false
+            this.mdShowCart = false
         }
     }
 }

@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div class="md-modal modal-msg md-modal-transition md-show" v-show="loginModalFlag">
+        <div class="md-modal modal-msg md-modal-transition md-show" v-show="mdShow">
             <div class="md-modal-inner">
                 <div class="md-top">
                     <div class="md-title">Login in</div>
-                    <button class="md-close" @click="loginModalFlag=false">Close</button>
+                    <button class="md-close" @click="close">Close</button>
                 </div>
                 <div class="md-content">
                     <div class="confirm-tips">
@@ -23,13 +23,14 @@
                             </li>
                         </ul> -->
                     </div>
-                    <div class="btn-wrap">
-                        <a href="javascript:;" class="btn-login" @click="login">登 录</a>
-                    </div>
+                     <div class="btn-wrap">
+                        <slot name="btnGroup"></slot>
+                        <!-- <a href="javascript:;" class="btn-login" @click="login">登 录</a> -->
+                    </div> 
                 </div>
             </div>
         </div>
-        <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+        <div class="md-overlay" v-if="mdShow" @click="close"></div>
     </div>
 </template>
 <script>
@@ -37,6 +38,14 @@ export default {
     data() {
         return {
             loginModalFlag: true
+        }
+    },
+    props: [
+        'mdShow'
+    ],
+    methods: {
+        close() {
+            this.$emit('close')
         }
     }
 }
