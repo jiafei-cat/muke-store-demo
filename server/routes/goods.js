@@ -85,7 +85,7 @@ router.post('/addCart', function (req, res, next) {
             if (userdoc) {
                 let goodItem = ''
                 userdoc.cartList.forEach((item, index) => {
-                    if (item.productId = productId) {
+                    if (item.productId == productId) {
                         goodItem = item
                         item.productNum++
                     }
