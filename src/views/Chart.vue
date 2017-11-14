@@ -1,6 +1,6 @@
 <template>
     <div>
-        <nav-header></nav-header>
+        <nav-header @login="login" @logout="logout"></nav-header>
         <nav-bread>
             <span>Chart</span>
         </nav-bread>
@@ -74,9 +74,9 @@
                                     <div class="item-quantity">
                                         <div class="select-self select-self-open">
                                             <div class="select-self-area">
-                                                <a class="input-sub">-</a>
+                                                <a class="input-sub" @click="editChart('minu', item)">-</a>
                                                 <span class="select-ipt">{{ item.productNum }}</span>
-                                                <a class="input-add">+</a>
+                                                <a class="input-add" @click="editChart('add', item)">+</a>
                                             </div>
                                         </div>
                                     </div>
@@ -86,7 +86,7 @@
                                 </div>
                                 <div class="cart-tab-5">
                                     <div class="cart-item-opration">
-                                        <a href="javascript:;" class="item-edit-btn">
+                                        <a href="javascript:;" class="item-edit-btn" @click="delCartConfirm(item.productId)">
                                             <svg class="icon icon-del">
                                                 <use xlink:href="#icon-del"></use>
                                             </svg>
@@ -124,6 +124,13 @@
                 </div>
             </div>
         </div>
+        <Modal :mdShow="modalConfirm">
+            <p slot="message">确定要删除该商品?</p>
+            <div slot="btnGroup">
+                <a href="javascript:;" class="btn btn--m" @click="delCart">确认</a>
+                <a href="javascript:;" class="btn btn--m" @click="modalConfirm = false">关闭</a>
+            </div>
+        </Modal>
         <nav-footer></nav-footer>
     </div>
 </template>
@@ -164,7 +171,9 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            productList: []
+            productList: [],
+            modalConfirm: false,
+            productId: ''
         }
     },
     mounted() {
@@ -174,10 +183,37 @@ export default {
         getChartList() {
             axios.get('/users/chartlist').then((res) => {
                 if (res.data.status === '0') {
-                    console.log(res.data.result)
                     this.productList = res.data.result
                 }
             })
+        },
+        delCartConfirm(productId) {
+            this.modalConfirm = true
+            this.productId = productId
+        },
+        delCart() {
+            axios.post('/users/cart/del', {
+                productId: this.productId
+            }).then((res) => {
+                if (res.data.status === '0') {
+                    this.modalConfirm = false
+                    this.getChartList()
+                }
+            })
+        },
+        editChart(type, item) {
+            if (item.productNum === 1) {
+                this.productId = item.productId
+                this.modalConfirm = true
+            } else {
+                type === 'add' ? item.productNum ++ : item.productNum --
+            }
+        },
+        login() {
+            this.getChartList()
+        },
+        logout() {
+            this.getChartList()
         }
     },
     components: {

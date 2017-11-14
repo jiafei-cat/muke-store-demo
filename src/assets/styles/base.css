@@ -21,6 +21,10 @@ body {
   position: relative;
 }
 
+div{
+      user-select:none;
+}
+
 ul, ol {
   list-style: none;
   margin: 0;

@@ -77,7 +77,7 @@ router.get('/checkLogin', (req, res, next) => {
 // 查询购物车
 router.get('/chartlist', (req, res, next) => {
     let userId = req.cookies.userId
-    User.findOne({userId: userId}, (err, doc) => {
+    User.findOne({ userId: userId }, (err, doc) => {
         if (err) {
             res.json({
                 status: '1',
@@ -85,14 +85,43 @@ router.get('/chartlist', (req, res, next) => {
                 result: ''
             })
         } else {
-            if(doc){
+            if (doc) {
                 res.json({
                     status: '0',
                     msg: '',
-                    result: doc.cartList 
+                    result: doc.cartList
                 })
-                
+
             }
+        }
+    })
+})
+
+// 删除商品
+router.post('/cart/del', (req, res, next) => {
+    let userId = req.cookies.userId
+    let productId = req.body.productId
+    User.update({
+        userId: userId
+    }, {
+        $pull: {
+            'cartList': {
+                'productId': productId
+            }
+        }
+    }, (err, doc) => {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'suc'
+            })
         }
     })
 })
