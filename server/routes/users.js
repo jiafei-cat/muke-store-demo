@@ -120,9 +120,67 @@ router.post('/cart/del', (req, res, next) => {
             res.json({
                 status: '0',
                 msg: '',
-                result: 'suc'
+                result: 'success'
             })
         }
     })
+})
+
+// 编辑购物车
+router.post('/cartEdit', (req, res, next) => {
+    let {cookies: {userId}, body: {productId, productNum, checked, allChecked}} = req
+    if (productId) {
+        User.update({
+            userId: userId,
+            'cartList.productId': productId
+        }, {
+            'cartList.$.productNum': productNum,
+            'cartList.$.checked': checked
+        }, (err, doc) => {
+            if (err) {
+                res.json({
+                    status: '1',
+                    msg: err.message,
+                    result: ''
+                })
+            } else {
+                res.json({
+                    status: '0',
+                    msg: '',
+                    result: 'success'
+                })
+            }
+        })
+    } else {
+        User.findOne({userId}, (err, doc) => {
+            if (err) {
+                res.json({
+                    status: '1',
+                    msg: err.message,
+                    result: ''
+                })
+            } else {
+                if (doc) {
+                    doc.cartList.forEach((item) => {
+                        item.checked = allChecked
+                    })
+                    doc.save((saveErr, saveDoc) => {
+                        if (saveErr) {
+                            res.json({
+                                status: '1',
+                                msg: saveErr.message
+                            })
+                        } else {
+                            res.json({
+                                status: '0',
+                                msg: '',
+                                result: 'success'
+                            })
+                        }
+                    })
+                }
+            }
+        })
+    }
 })
 module.exports = router

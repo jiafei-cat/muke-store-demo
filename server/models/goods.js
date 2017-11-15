@@ -5,6 +5,8 @@ let productSchema = new Schema({
     'productId': String,
     'productName': String,
     'salePrice': Number,
+    'checked': String,
+    'productNum': Number,
     'productImage': String
 })
 

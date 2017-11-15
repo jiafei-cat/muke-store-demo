@@ -54,7 +54,7 @@
                             <li v-for=" item in productList ">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
-                                        <a href="javascipt:;" class="checkbox-btn item-check-btn">
+                                        <a href="javascipt:;" class="checkbox-btn item-check-btn" @click="checkProduct(item)" :class="{'check': item.checked == 1}">
                                             <svg class="icon icon-ok">
                                                 <use xlink:href="#icon-ok"></use>
                                             </svg>
@@ -101,8 +101,8 @@
                     <div class="cart-foot-inner">
                         <div class="cart-foot-l">
                             <div class="item-all-check">
-                                <a href="javascipt:;">
-                                    <span class="checkbox-btn item-check-btn">
+                                <a href="javascipt:;" @click="checkAll(productList.length == productListCkLent)">
+                                    <span class="checkbox-btn item-check-btn" :class="{'check': productList.length == productListCkLent}">
                                         <svg class="icon icon-ok">
                                             <use xlink:href="#icon-ok" />
                                         </svg>
@@ -114,7 +114,7 @@
                         <div class="cart-foot-r">
                             <div class="item-total">
                                 Item total:
-                                <span class="total-price">500</span>
+                                <span class="total-price">{{ allTotal }}</span>
                             </div>
                             <div class="btn-wrap">
                                 <a class="btn btn--red">Checkout</a>
@@ -179,6 +179,22 @@ export default {
     mounted() {
         this.getChartList()
     },
+    computed: {
+        productListCkLent() {
+            let ckLength = 0
+            this.productList.forEach((i, k) => {
+                i.checked === '1' ? ckLength++ : ''
+            })
+            return ckLength
+        },
+        allTotal() {
+            let sum = 0
+            this.productList.forEach((i, k) => {
+                sum += i.productNum * i.salePrice
+            })
+            return sum
+        }
+    },
     methods: {
         getChartList() {
             axios.get('/users/chartlist').then((res) => {
@@ -202,12 +218,41 @@ export default {
             })
         },
         editChart(type, item) {
-            if (item.productNum === 1) {
+            if (item.productNum === '1' && type !== 'add') {
                 this.productId = item.productId
                 this.modalConfirm = true
             } else {
                 type === 'add' ? item.productNum ++ : item.productNum --
+                axios.post('/users/cartEdit', {
+                    productId: item.productId,
+                    checked: item.checked,
+                    productNum: item.productNum
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.getChartList()
+                    }
+                })
             }
+        },
+        checkProduct(item) {
+            item.checked = item.checked === '1' ? 0 : 1
+            axios.post('/users/cartEdit', {
+                productId: item.productId,
+                checked: item.checked,
+                productNum: item.productNum
+            }).then((res) => {
+                if (res.data.status === '0') {
+                    this.getChartList()
+                }
+            })
+        },
+        checkAll(flag) {
+            let allChecked = flag ? 0 : 1
+            axios.post('/users/cartEdit', {allChecked}).then((res) => {
+                if (res.data.status === '0') {
+                    this.getChartList()
+                }
+            })
         },
         login() {
             this.getChartList()
