@@ -218,6 +218,7 @@ export default {
             })
         },
         editChart(type, item) {
+            
             if (item.productNum === '1' && type !== 'add') {
                 this.productId = item.productId
                 this.modalConfirm = true
