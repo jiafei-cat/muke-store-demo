@@ -114,7 +114,7 @@
                         <div class="cart-foot-r">
                             <div class="item-total">
                                 Item total:
-                                <span class="total-price">{{ allTotal }}</span>
+                                <span class="total-price">{{ allTotal | currency }}</span>
                             </div>
                             <div class="btn-wrap">
                                 <a class="btn btn--red">Checkout</a>
@@ -218,7 +218,6 @@ export default {
             })
         },
         editChart(type, item) {
-            
             if (item.productNum === '1' && type !== 'add') {
                 this.productId = item.productId
                 this.modalConfirm = true

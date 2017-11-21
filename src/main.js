@@ -7,6 +7,13 @@ import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
 Vue.config.productionTip = false
 
+/**
+ * =========================================================
+ *                      [公共模块引入]
+ * =========================================================
+ */
+import './util/filter'
+
 Vue.use(VueLazyload, {
     loading: '/static/loading-svg/loading-cylon-red.svg'
 })
