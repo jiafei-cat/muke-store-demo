@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import GoodsList from '@/views/GoodsList'
-import Chart from '@/views/Chart'
+import Cart from '@/views/Cart'
+import address from '@/views/address'
 
 Vue.use(Router)
 
@@ -13,9 +14,14 @@ export default new Router({
             component: GoodsList
         },
         {
-            path: '/chart',
-            name: 'Chart',
-            component: Chart
+            path: '/cart',
+            name: 'Cart',
+            component: Cart
+        },
+        {
+            path: '/address',
+            name: 'address',
+            component: address
         }
     ]
 })

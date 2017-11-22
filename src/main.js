@@ -13,6 +13,7 @@ Vue.config.productionTip = false
  * =========================================================
  */
 import './util/filter'
+import './util/components'
 
 Vue.use(VueLazyload, {
     loading: '/static/loading-svg/loading-cylon-red.svg'

@@ -1,5 +1,10 @@
+/**
+ * =========================================================
+ *                      [公共filter]
+ * =========================================================
+ */
 import vue from 'vue'
-import * as fliter from './filter'
-for (let i in fliter) {
-    vue.filter(i, fliter[i])
+import * as filter from './filter'
+for (let i in filter) {
+    vue.filter(i, filter[i])
 }

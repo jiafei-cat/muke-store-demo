@@ -100,7 +100,7 @@ export default {
                     this.errorTip = false
                     this.loginModalFlag = false
                     this.nickName = resData.result.userName
-                    this.$emit('login')
+                    this.$router.go(0)
                 } else {
                     this.errorTip = true
                 }
@@ -112,7 +112,7 @@ export default {
                 console.log(resData)
                 if (resData.status === '0') {
                     this.nickName = ''
-                    this.$emit('logout')
+                    this.$router.go(0)
                 }
             })
         }

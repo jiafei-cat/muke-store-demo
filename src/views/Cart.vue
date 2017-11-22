@@ -2,7 +2,7 @@
     <div>
         <nav-header @login="login" @logout="logout"></nav-header>
         <nav-bread>
-            <span>Chart</span>
+            <span>Cart</span>
         </nav-bread>
         <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <defs>
@@ -74,9 +74,9 @@
                                     <div class="item-quantity">
                                         <div class="select-self select-self-open">
                                             <div class="select-self-area">
-                                                <a class="input-sub" @click="editChart('minu', item)">-</a>
+                                                <a class="input-sub" @click="editCart('minu', item)">-</a>
                                                 <span class="select-ipt">{{ item.productNum }}</span>
-                                                <a class="input-add" @click="editChart('add', item)">+</a>
+                                                <a class="input-add" @click="editCart('add', item)">+</a>
                                             </div>
                                         </div>
                                     </div>
@@ -114,16 +114,17 @@
                         <div class="cart-foot-r">
                             <div class="item-total">
                                 Item total:
-                                <span class="total-price">{{ allTotal | currency }}</span>
+                                <span class="total-price">{{ allTotal | currency('', 2) }}</span>
                             </div>
                             <div class="btn-wrap">
-                                <a class="btn btn--red">Checkout</a>
+                                <a class="btn btn--red" :class="{ 'btn--dis': productListCkLent == 0 }" @click="checKout">Checkout</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <Modal></Modal>
         <Modal :mdShow="modalConfirm">
             <p slot="message">确定要删除该商品?</p>
             <div slot="btnGroup">
@@ -163,10 +164,6 @@
 </style>
 <script>
 import '@/assets/styles/checkout.css'
-import NavHeader from '@/components/NavHeader'
-import NavFooter from '@/components/NavFooter'
-import NavBread from '@/components/NavBread'
-import Modal from '@/components/Modal'
 import axios from 'axios'
 export default {
     data() {
@@ -177,7 +174,7 @@ export default {
         }
     },
     mounted() {
-        this.getChartList()
+        this.getCartList()
     },
     computed: {
         productListCkLent() {
@@ -190,14 +187,14 @@ export default {
         allTotal() {
             let sum = 0
             this.productList.forEach((i, k) => {
-                sum += i.productNum * i.salePrice
+                sum += i.checked === '1' ? i.productNum * i.salePrice : 0
             })
             return sum
         }
     },
     methods: {
-        getChartList() {
-            axios.get('/users/chartlist').then((res) => {
+        getCartList() {
+            axios.get('/users/cartlist').then((res) => {
                 if (res.data.status === '0') {
                     this.productList = res.data.result
                 }
@@ -213,11 +210,11 @@ export default {
             }).then((res) => {
                 if (res.data.status === '0') {
                     this.modalConfirm = false
-                    this.getChartList()
+                    this.getCartList()
                 }
             })
         },
-        editChart(type, item) {
+        editCart(type, item) {
             if (item.productNum === '1' && type !== 'add') {
                 this.productId = item.productId
                 this.modalConfirm = true
@@ -229,7 +226,7 @@ export default {
                     productNum: item.productNum
                 }).then((res) => {
                     if (res.data.status === '0') {
-                        this.getChartList()
+                        this.getCartList()
                     }
                 })
             }
@@ -242,7 +239,7 @@ export default {
                 productNum: item.productNum
             }).then((res) => {
                 if (res.data.status === '0') {
-                    this.getChartList()
+                    this.getCartList()
                 }
             })
         },
@@ -250,22 +247,21 @@ export default {
             let allChecked = flag ? 0 : 1
             axios.post('/users/cartEdit', {allChecked}).then((res) => {
                 if (res.data.status === '0') {
-                    this.getChartList()
+                    this.getCartList()
                 }
             })
         },
+        checKout() {
+            if (this.productListCkLent > 0) {
+                this.$router.push({path: '/address'})
+            }
+        },
         login() {
-            this.getChartList()
+            this.getCartList()
         },
         logout() {
-            this.getChartList()
+            this.getCartList()
         }
-    },
-    components: {
-        NavHeader,
-        NavFooter,
-        NavBread,
-        Modal
     }
 }
 </script>

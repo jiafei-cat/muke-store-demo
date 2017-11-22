@@ -41,7 +41,7 @@
                                         <div class="name">{{ item.productName }}</div>
                                         <div class="price">{{ item.salePrice }}</div>
                                         <div class="btn-area">
-                                            <a href="javascript:;" class="btn btn--m" @click="saveToChart(item.productId)">加入购物车</a>
+                                            <a href="javascript:;" class="btn btn--m" @click="saveToCart(item.productId)">加入购物车</a>
                                         </div>
                                     </div>
                                 </li>
@@ -72,7 +72,7 @@
             </p>
             <div slot="btnGroup">
                 <a class="btn btn--m" href="javascript:;" @click="mdShowCart = false">继续购物</a>
-                <router-link class="btn btn--m" href="javascript:;" to="/chart">查看购物车</router-link>
+                <router-link class="btn btn--m" href="javascript:;" to="/cart">查看购物车</router-link>
             </div>
         </modal>
         <nav-footer></nav-footer>
@@ -81,10 +81,6 @@
 <script>
 import '@/assets/styles/base.css'
 import '@/assets/styles/product.css'
-import NavHeader from '@/components/NavHeader'
-import NavFooter from '@/components/NavFooter'
-import NavBread from '@/components/NavBread'
-import Modal from '@/components/Modal'
 import axios from 'axios'
 export default {
     data() {
@@ -116,12 +112,6 @@ export default {
             curFliterIndex: 'all',
             isShowFilter: false
         }
-    },
-    components: {
-        NavHeader,
-        NavFooter,
-        NavBread,
-        Modal
     },
     mounted() {
         this.getGoodsList()
@@ -175,7 +165,7 @@ export default {
             this.isShowFilter = false
             this.getGoodsList()
         },
-        saveToChart(productId) {
+        saveToCart(productId) {
             axios.post('/goods/addCart', {
                 'productId': productId
             }).then((res) => {

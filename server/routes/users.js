@@ -75,7 +75,7 @@ router.get('/checkLogin', (req, res, next) => {
 })
 
 // 查询购物车
-router.get('/chartlist', (req, res, next) => {
+router.get('/cartlist', (req, res, next) => {
     let userId = req.cookies.userId
     User.findOne({ userId: userId }, (err, doc) => {
         if (err) {
@@ -183,4 +183,26 @@ router.post('/cartEdit', (req, res, next) => {
         })
     }
 })
+
+router.get('/addressList', (req, res, next) => {
+    let userId = req.cookies.userId
+    User.findOne({userId}, (err, doc) => {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            console.log(doc)
+            console.log(doc.addressList)
+            res.json({
+                status: '0',
+                msg: '',
+                result: doc
+            })
+        }
+    })
+})
+
 module.exports = router

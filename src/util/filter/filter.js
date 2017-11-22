@@ -11,7 +11,9 @@ const digitsRE = /(\d{3})(?=\d)/g
  * @param {Number} value    数字
  * @param {String} currency 单位
  * @param {Number} decimals 保留小数位数
- * @example
+ * @example {{ value | currency(currency, decimals) }}
+ * @example {{  1000 | currency('$', '2') }} => $1,000.00
+ * @return {String}
  */
 
 function currency(value, currency, decimals) {
