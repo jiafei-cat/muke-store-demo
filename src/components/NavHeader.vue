@@ -9,8 +9,9 @@
         </symbol>
         <div class="navbar">
             <div class="navbar-left-container">
-                <a href="/">
-                    <img class="navbar-brand-logo" src="static/logo111.png"></a>
+                <!-- <a href="/">
+                     <img class="navbar-brand-logo" src="static/logo111.png">
+                </a>  -->
             </div>
             <div class="navbar-right-container" style="display: flex;">
                 <div class="navbar-menu-container">
@@ -64,6 +65,7 @@
 <script>
 import './../assets/styles/login.css'
 import axios from 'axios'
+import { _login, _ckLogin } from '../service/service'
 export default {
     data() {
         return {
@@ -78,33 +80,29 @@ export default {
         this.checkLogin()
     },
     methods: {
-        checkLogin() {
-            axios.get('/users/checkLogin').then((res) => {
-                const dres = res.data
-                if (dres.status === '0') {
-                    this.nickName = dres.result
-                }
-            })
+        async checkLogin() {
+            let res = await _ckLogin()
+            const dres = res.data
+            this.nickName = dres.result
         },
-        login() {
+        async login() {
             if (!this.userName || !this.userPwd) {
                 this.errorTip = true
                 return
             }
-            axios.post('/users/login', {
+            let login = await _login({
                 userName: this.userName,
                 userPwd: this.userPwd
-            }).then((res) => {
-                let resData = res.data
-                if (resData.status === '0') {
-                    this.errorTip = false
-                    this.loginModalFlag = false
-                    this.nickName = resData.result.userName
-                    this.$router.go(0)
-                } else {
-                    this.errorTip = true
-                }
             })
+            let resData = login.data
+            if (resData.status === '0') {
+                this.errorTip = false
+                this.loginModalFlag = false
+                this.nickName = resData.result.userName
+                // this.$router.go(0)
+            } else {
+                this.errorTip = true
+            }
         },
         logout() {
             axios.post('/users/logout').then((res) => {

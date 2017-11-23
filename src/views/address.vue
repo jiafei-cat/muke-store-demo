@@ -61,11 +61,11 @@
                     <div class="addr-list-wrap">
                         <div class="addr-list">
                         <ul>
-                            <li>
+                            <li v-for="(item,index) in addressListFilter"  :key="item.userName" :class="{'check': index === checkIndex}" @click="checkIndex=index">
                             <dl>
-                                <dt>XXX</dt>
-                                <dd class="address">朝阳公园</dd>
-                                <dd class="tel">10000000000</dd>
+                                <dt>{{ item.userName }}</dt>
+                                <dd class="address">{{ item.streetName }}</dd>
+                                <dd class="tel">{{ item.tel }}</dd>
                             </dl>
                             <div class="addr-opration addr-del">
                                 <a href="javascript:;" class="addr-del-btn">
@@ -73,9 +73,9 @@
                                 </a>
                             </div>
                             <div class="addr-opration addr-set-default">
-                                <a href="javascript:;" class="addr-set-default-btn"><i>Set default</i></a>
+                                <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault" @click="setDefault(item.addressId)"><i>Set default</i></a>
                             </div>
-                            <div class="addr-opration addr-default">Default address</div>
+                            <div class="addr-opration addr-default" v-if="item.isDefault">Default address</div>
                             </li>
                             <li class="addr-new">
                             <div class="add-new-inner">
@@ -89,7 +89,7 @@
                         </div>
 
                         <div class="shipping-addr-more">
-                        <a class="addr-more-btn up-down-btn" href="javascript:;">
+                        <a class="addr-more-btn up-down-btn" :class="{'open': limit>3}" href="javascript:;" @click="showMore">
                             more
                             <i class="i-up-down">
                             <i class="i-up-down-l"></i>
@@ -130,14 +130,42 @@
     </div>
 </template>
 <script>
+import { _addressList } from '../service/service'
 export default {
     data() {
         return {
-
+            limit: 3, // 地址条数显示
+            checkIndex: 0,
+            addressList: []
         }
     },
-    methods:{
-        
+    mounted() {
+        this.getAddress()
+    },
+    computed: {
+        addressListFilter() {
+            return this.addressList.slice(0, this.limit)
+        }
+    },
+    methods: {
+        async getAddress() {
+            let addressList = await _addressList()
+            this.addressList = addressList.data.result
+        },
+        showMore() {
+            if (this.limit !== 3) {
+                this.limit = 3
+            } else {
+                this.limit = this.addressList.length
+            }
+        },
+        setDefault(id) {
+            this.$http.post('/users/setDefault', {id}).then((res) => {
+                if (res.data.status === '0') {
+                    console.log(res)
+                }
+            })
+        }
     }
 }
 </script>

@@ -4,6 +4,16 @@ let userSchema = new mongoose.Schema({
     userName: String,
     userPwd: String,
     orderList: Array,
+    addressList: [
+        {
+            addressId: String,
+            isDefault: Boolean,
+            postCode: String,
+            streetName: String,
+            tel: String,
+            userName: String
+        }
+    ],
     cartList: [
         {
             productImage: String,

@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "babel-polyfill": "^6.26.0",
+    "babel-runtime": "^6.26.0",
     "mongoose": "^4.11.11",
+    "qs": "^6.5.1",
     "vue": "^2.4.2",
     "vue-infinite-scroll": "^2.0.1",
     "vue-lazyload": "^1.1.3",

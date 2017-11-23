@@ -194,15 +194,45 @@ router.get('/addressList', (req, res, next) => {
                 result: ''
             })
         } else {
-            console.log(doc)
-            console.log(doc.addressList)
             res.json({
                 status: '0',
                 msg: '',
-                result: doc
+                result: doc.addressList
             })
         }
     })
 })
 
+// 设置默认地址
+router.post('/setDefault', (req, res, next) => {
+    let {cookies: {userId}, body: {id}} = req
+    User.findOne({userId}, (err, doc) => {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            let addressList = doc.addressList
+            addressList.forEach((i, k) => {
+                i.isDefault = i.ddressId === id
+            })
+            User.save((saveErr, saveDoc) => {
+                if (saveErr) {
+                    res.json({
+                        status: '1',
+                        msg: saveErr.message
+                    })
+                } else {
+                    res.json({
+                        status: '0',
+                        msg: '',
+                        result: 'success'
+                    })
+                }
+            })
+        }
+    })
+})
 module.exports = router

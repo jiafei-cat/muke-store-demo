@@ -3,8 +3,7 @@
  *                      [公共filter]
  * =========================================================
  */
-import vue from 'vue'
-import * as filter from './filter'
-for (let i in filter) {
-    vue.filter(i, filter[i])
-}
+import Vue from 'vue'
+import * as filters from './filter'
+
+Object.keys(filters).forEach(k => Vue.filter(k, filters[k])) // 注册过滤器

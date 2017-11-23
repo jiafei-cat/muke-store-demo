@@ -51,7 +51,7 @@
                             </ul>
                         </div>
                         <ul class="cart-item-list">
-                            <li v-for=" item in productList ">
+                            <li v-for=" item in productList " :key="item">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
                                         <a href="javascipt:;" class="checkbox-btn item-check-btn" @click="checkProduct(item)" :class="{'check': item.checked == 1}">

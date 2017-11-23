@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
+import axios from 'axios'
 Vue.config.productionTip = false
 
 /**
@@ -19,6 +20,8 @@ Vue.use(VueLazyload, {
     loading: '/static/loading-svg/loading-cylon-red.svg'
 })
 Vue.use(infiniteScroll)
+
+Vue.prototype.$http = axios
 /* eslint-disable no-new */
 new Vue({
     el: '#app',

@@ -10,7 +10,7 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: ['babel-polyfill', './src/main.js'] // babel-polyfill解决部分浏览器对ES6不支持情况
   },
   output: {
     path: config.build.assetsRoot,
