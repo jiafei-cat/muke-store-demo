@@ -51,7 +51,7 @@
                             </ul>
                         </div>
                         <ul class="cart-item-list">
-                            <li v-for=" item in productList " :key="item">
+                            <li v-for=" item in productList " :key="item.productId">
                                 <div class="cart-tab-1">
                                     <div class="cart-item-check">
                                         <a href="javascipt:;" class="checkbox-btn item-check-btn" @click="checkProduct(item)" :class="{'check': item.checked == 1}">
@@ -164,7 +164,7 @@
 </style>
 <script>
 import '@/assets/styles/checkout.css'
-import axios from 'axios'
+import { _cartList, _cartDel, _cartEdit } from '../service/service'
 export default {
     data() {
         return {
@@ -193,63 +193,54 @@ export default {
         }
     },
     methods: {
-        getCartList() {
-            axios.get('/users/cartlist').then((res) => {
-                if (res.data.status === '0') {
-                    this.productList = res.data.result
-                }
-            })
+        async getCartList() {
+            let res = await _cartList()
+            this.productList = res.data.result
         },
         delCartConfirm(productId) {
             this.modalConfirm = true
             this.productId = productId
         },
-        delCart() {
-            axios.post('/users/cart/del', {
-                productId: this.productId
-            }).then((res) => {
-                if (res.data.status === '0') {
-                    this.modalConfirm = false
-                    this.getCartList()
-                }
-            })
+        async delCart() {
+            let res = await _cartDel({productId: this.productId})
+            if (res.data.status === '0') {
+                this.modalConfirm = false
+                this.getCartList()
+            }
         },
-        editCart(type, item) {
+        async editCart(type, item) {
             if (item.productNum === '1' && type !== 'add') {
                 this.productId = item.productId
                 this.modalConfirm = true
             } else {
                 type === 'add' ? item.productNum ++ : item.productNum --
-                axios.post('/users/cartEdit', {
+                let res = await _cartEdit({
                     productId: item.productId,
                     checked: item.checked,
                     productNum: item.productNum
-                }).then((res) => {
-                    if (res.data.status === '0') {
-                        this.getCartList()
-                    }
                 })
+                if (res.data.status === '0') {
+                    this.getCartList()
+                }
             }
         },
-        checkProduct(item) {
+        async checkProduct(item) {
             item.checked = item.checked === '1' ? 0 : 1
-            axios.post('/users/cartEdit', {
+            let res = await _cartEdit({
                 productId: item.productId,
                 checked: item.checked,
                 productNum: item.productNum
-            }).then((res) => {
-                if (res.data.status === '0') {
-                    this.getCartList()
-                }
             })
+            if (res.data.status === '0') {
+                this.getCartList()
+            }
         },
-        checkAll(flag) {
+        async checkAll(flag) {
             let allChecked = flag ? 0 : 1
-            axios.post('/users/cartEdit', {allChecked}).then((res) => {
-                if (res.data.status === '0') {
-                    this.getCartList()
-                }
-            })
+            let res = await _cartEdit({allChecked})
+            if (res.data.status === '0') {
+                this.getCartList()
+            }
         },
         checKout() {
             if (this.productListCkLent > 0) {

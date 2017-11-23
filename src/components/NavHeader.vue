@@ -64,8 +64,7 @@
 
 <script>
 import './../assets/styles/login.css'
-import axios from 'axios'
-import { _login, _ckLogin } from '../service/service'
+import { _login, _ckLogin, _logout } from '../service/service'
 export default {
     data() {
         return {
@@ -99,20 +98,18 @@ export default {
                 this.errorTip = false
                 this.loginModalFlag = false
                 this.nickName = resData.result.userName
-                // this.$router.go(0)
+                this.$router.go(0)
             } else {
                 this.errorTip = true
             }
         },
-        logout() {
-            axios.post('/users/logout').then((res) => {
-                let resData = res.data
-                console.log(resData)
-                if (resData.status === '0') {
-                    this.nickName = ''
-                    this.$router.go(0)
-                }
-            })
+        async logout() {
+            let res = await _logout()
+            let resData = res.data
+            if (resData.status === '0') {
+                this.nickName = ''
+                this.$router.go(0)
+            }
         }
     }
 }

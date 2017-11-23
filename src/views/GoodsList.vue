@@ -81,7 +81,7 @@
 <script>
 import '@/assets/styles/base.css'
 import '@/assets/styles/product.css'
-import axios from 'axios'
+import { _goodsList, _addCart } from '../service/service'
 export default {
     data() {
         return {
@@ -117,35 +117,32 @@ export default {
         this.getGoodsList()
     },
     methods: {
-        getGoodsList(flag) {
-            let param = {
+        async getGoodsList(flag) {
+            let param = {params: {
                 page: this.page,
                 pageSize: this.pageSize,
                 sort: this.sortFlag ? 1 : -1,
                 priceLevel: this.priceLevel
-            }
+            }}
             this.loading = true
-            axios.get('/goods/list', {
-                params: param
-            }).then((result) => {
-                this.loading = false
-                let res = result.data
-                if (res.status === '0') {
-                    if (flag) {
-                        this.goodsList = this.goodsList.concat(res.result.list)
-                        if (res.result.count === 0 || res.result.count < this.pageSize) {
-                            this.busy = true
-                        } else {
-                            this.busy = false
-                        }
+            let result = await _goodsList(param)
+            this.loading = false
+            let res = result.data
+            if (res.status === '0') {
+                if (flag) {
+                    this.goodsList = this.goodsList.concat(res.result.list)
+                    if (res.result.count === 0 || res.result.count < this.pageSize) {
+                        this.busy = true
                     } else {
-                        this.goodsList = res.result.list
                         this.busy = false
                     }
                 } else {
-                    this.goodsList = []
+                    this.goodsList = res.result.list
+                    this.busy = false
                 }
-            })
+            } else {
+                this.goodsList = []
+            }
         },
         loadMore() {
             setTimeout(() => {
@@ -165,16 +162,13 @@ export default {
             this.isShowFilter = false
             this.getGoodsList()
         },
-        saveToCart(productId) {
-            axios.post('/goods/addCart', {
-                'productId': productId
-            }).then((res) => {
-                if (res.data.status === '0') {
-                    this.mdShowCart = true
-                } else {
-                    this.mdShow = true
-                }
-            })
+        async saveToCart(productId) {
+            let res = await _addCart({'productId': productId})
+            if (res.data.status === '0') {
+                this.mdShowCart = true
+            } else {
+                this.mdShow = true
+            }
         },
         showFilter() {
             this.isShowFilter = true

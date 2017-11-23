@@ -14,6 +14,7 @@
     "axios": "^0.16.2",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
+    "cors": "^2.8.4",
     "mongoose": "^4.11.11",
     "qs": "^6.5.1",
     "vue": "^2.4.2",

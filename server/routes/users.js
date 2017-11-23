@@ -216,9 +216,9 @@ router.post('/setDefault', (req, res, next) => {
         } else {
             let addressList = doc.addressList
             addressList.forEach((i, k) => {
-                i.isDefault = i.ddressId === id
+                i.isDefault = i.addressId === id
             })
-            User.save((saveErr, saveDoc) => {
+            doc.save((saveErr, saveDoc) => {
                 if (saveErr) {
                     res.json({
                         status: '1',

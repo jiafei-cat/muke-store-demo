@@ -130,7 +130,7 @@
     </div>
 </template>
 <script>
-import { _addressList } from '../service/service'
+import { _addressList, _setDefault } from '../service/service'
 export default {
     data() {
         return {
@@ -159,12 +159,9 @@ export default {
                 this.limit = this.addressList.length
             }
         },
-        setDefault(id) {
-            this.$http.post('/users/setDefault', {id}).then((res) => {
-                if (res.data.status === '0') {
-                    console.log(res)
-                }
-            })
+        async setDefault(id) {
+            await _setDefault({id})
+            this.getAddress()
         }
     }
 }
