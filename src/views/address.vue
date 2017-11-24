@@ -69,7 +69,7 @@
                             </dl>
                             <div class="addr-opration addr-del">
                                 <a href="javascript:;" class="addr-del-btn">
-                                <svg class="icon icon-del"><use xlink:href="#icon-del"></use></svg>
+                                <svg class="icon icon-del" @click="delAddress(item.addressId)"><use xlink:href="#icon-del"></use></svg>
                                 </a>
                             </div>
                             <div class="addr-opration addr-set-default">
@@ -120,22 +120,31 @@
                         </div>
                     </div>
                     <div class="next-btn-wrap">
-                        <a class="btn btn--m btn--red">Next</a>
+                        <router-link class="btn btn--m btn--red" :to="{path: 'orderConfirm', query:{'addressId': selectedAddrId}}">Next</router-link>
                     </div>
                     </div>
                 </div>
                 </div>
         </div>
         <nav-footer></nav-footer>
+        <Modal :mdShow="modalConfirm">
+            <p slot="message">确定要删除该地址?</p>
+            <div slot="btnGroup">
+                <a href="javascript:;" class="btn btn--m" @click="sure">确认</a>
+                <a href="javascript:;" class="btn btn--m" @click="modalConfirm = false">关闭</a>
+            </div>
+        </Modal>
     </div>
 </template>
 <script>
-import { _addressList, _setDefault } from '../service/service'
+import { _addressList, _setDefault, _delAddress } from '../service/service'
 export default {
     data() {
         return {
             limit: 3, // 地址条数显示
             checkIndex: 0,
+            modalConfirm: false,
+            curId: '',
             addressList: []
         }
     },
@@ -145,6 +154,9 @@ export default {
     computed: {
         addressListFilter() {
             return this.addressList.slice(0, this.limit)
+        },
+        selectedAddrId() {
+            return this.addressList.length ? this.addressList[this.checkIndex].addressId : ''
         }
     },
     methods: {
@@ -162,6 +174,18 @@ export default {
         async setDefault(id) {
             await _setDefault({id})
             this.getAddress()
+            this.checkIndex = 0
+        },
+        delAddress(id) {
+            this.modalConfirm = true
+            this.curId = id
+        },
+        async sure() {
+            let res = await _delAddress({id: this.curId})
+            if (res.data.status === '0') {
+                this.getAddress()
+                this.modalConfirm = false
+            }
         }
     }
 }

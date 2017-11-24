@@ -124,7 +124,6 @@
                 </div>
             </div>
         </div>
-        <Modal></Modal>
         <Modal :mdShow="modalConfirm">
             <p slot="message">确定要删除该商品?</p>
             <div slot="btnGroup">

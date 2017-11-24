@@ -1,6 +1,6 @@
 let express = require('express')
 let router = express.Router()
-
+require('./../util/')
 let User = require('../models/users')
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -204,8 +204,16 @@ router.get('/addressList', (req, res, next) => {
 })
 
 // 设置默认地址
-router.post('/setDefault', (req, res, next) => {
+router.post('/addressList/setDefault', (req, res, next) => {
     let {cookies: {userId}, body: {id}} = req
+    if (!id) {
+        res.json({
+            status: '1003',
+            msg: 'id is null',
+            result: ''
+        })
+        return
+    }
     User.findOne({userId}, (err, doc) => {
         if (err) {
             res.json({
@@ -217,6 +225,9 @@ router.post('/setDefault', (req, res, next) => {
             let addressList = doc.addressList
             addressList.forEach((i, k) => {
                 i.isDefault = i.addressId === id
+            })
+            addressList.sort((a, b) => {
+                return b.isDefault - a.isDefault
             })
             doc.save((saveErr, saveDoc) => {
                 if (saveErr) {
@@ -232,6 +243,104 @@ router.post('/setDefault', (req, res, next) => {
                     })
                 }
             })
+        }
+    })
+})
+
+// 删除地址
+router.post('/addressList/del', (req, res, next) => {
+    let userId = req.cookies.userId
+    let id = req.body.id
+    if (!id) {
+        res.json({
+            status: '1003',
+            msg: 'id is null',
+            result: ''
+        })
+        return
+    }
+    User.update({
+        userId: userId
+    }, {
+        $pull: {
+            'addressList': {
+                'addressId': id
+            }
+        }
+    }, (err, doc) => {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'success'
+            })
+        }
+    })
+})
+
+router.post('/payMent', (req, res, next) => {
+    let {cookies: {userId}, body: {id}} = req
+    User.findOne({userId}, (err, doc) => {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            let totalMoney = 0, addressList = []
+            let goodsList = doc.cartList.filter((i) => {
+                return i.checked === '1'
+            }).forEach((i) => {
+                totalMoney += (i.salePrice * i.productNum)
+            })
+            let address = doc.addressList.filter((i) => {
+                return i.addressId === id
+            })
+
+            let platform = '622' 
+
+            let r1 = Math.floor(Math.random() * 10)
+            let r2 = Math.floor(Math.random() * 10)
+
+            let sysDate = new Date().Format('yyyyMMddhhmmss')
+            let createDate =  new Date().Format('yyyy-MM-dd hh:mm:ss')
+            let orderId = platform + r1 + sysDate + r2
+
+            let order = {
+                orderId: orderId,
+                orderTotal: totalMoney,
+                addressInfo: address,
+                goodsList: goodsList,
+                orderStatus: '1',
+                createDate: createDate
+            }
+            doc.orderList.push(order)
+            doc.save((saveErr, saveDoc) => {
+                if (saveErr) {
+                    res.json({
+                        status: '1',
+                        msg: saveErr.message,
+                        result: ''
+                    })
+                } else {
+                    res.json({
+                        status: '0',
+                        msg: '',
+                        result: {
+                            orderId: order.orderId,
+                            orderTotal: order.orderTotal
+                        }
+                    })
+                }
+            })
+            
         }
     })
 })
