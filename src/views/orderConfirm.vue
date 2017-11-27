@@ -172,7 +172,10 @@ export default {
         },
         async pay() {
             let res = await _payMent({id: this.addressId})
-            console.log(res)
+            let result = res.data.result
+            if (res.data.status === '0') {
+                this.$router.push({path: '/orderSuccess', query: {'orderTotal': result.orderTotal, 'orderId': result.orderId}})
+            }
         }
     }
 }

@@ -29,4 +29,4 @@ export const _setDefault = (data) => request(urls.POST_SETDEFAULT_ADDRESS, data,
 export const _delAddress = (data) => request(urls.POST_DEL_ADDRESS, data, 'POST') // 删除地址
 
 // payMent page
-export const _payMent = (data) => request(urls.POST_PAY_PAYMENT, data, 'POST') // 设默认地址
+export const _payMent = (data) => request(urls.POST_PAY_PAYMENT, data, 'POST') // 提交订单

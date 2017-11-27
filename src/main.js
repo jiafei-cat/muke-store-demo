@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 import VueLazyload from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
-Vue.config.productionTip = false
+Vue.config.productionTip = false // 生产提示
 
 /**
  * =========================================================

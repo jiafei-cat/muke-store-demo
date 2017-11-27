@@ -5,6 +5,7 @@
  */
 import axios from 'axios'
 import qs from 'qs'
+import router from './../../src/router/index'
 
 axios.defaults.timeout = 5000 // 响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 配置请求头
@@ -30,6 +31,8 @@ axios.interceptors.response.use((res) => {
     if (res.data.status === '0') {
         console.log(res.data)
         return Promise.reject(res)
+    } else {
+        router.push({path: '/'})
     }
     return res
 }, (error) => {
