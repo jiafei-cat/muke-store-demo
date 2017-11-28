@@ -24,7 +24,9 @@
             <div class="order-create">
                 <div class="order-create-pic"><img src="static/ok-2.png" alt=""></div>
                 <div class="order-create-main">
-                    <h3>Congratulations! <br>Your order is under processing!</h3>
+                    <h3>Congratulations!<br>Your order is under processing!</h3>
+                    <h3 @click="change">{{ title }}</h3>
+                    <h3>{{ testTitle }}</h3>
                     <p>
                         <span>Order ID：{{ orderId }}</span>
                         <span>Order total：{{ orderTotal | currency('', 2) }}</span>
@@ -48,6 +50,7 @@
     </div>
 </template>
 <script>
+import { mapGetters, mapMutations } from 'vuex'
 export default {
     data() {
         return {
@@ -55,22 +58,25 @@ export default {
             orderId: ''
         }
     },
+    computed: {
+        title() {
+            return this.$store.state.title + ' - from state'
+        },
+        ...mapGetters(['testTitle'])
+    },
     mounted() {
         this.pageInit()
-        let a = {a: 1, b: 2}
-        let b = {b: 3, c: 4}
-        let c = ''
-        function xx(_a, _b) {
-            c = {..._a, ..._b}
-        }
-        xx(a, b)
-        console.log(c)
     },
     methods: {
         pageInit() {
             this.orderTotal = this.$route.query.orderTotal
             this.orderId = this.$route.query.orderId
-        }
+        },
+        change() {
+            // this.$store.commit('CHANGE_TITLE', 'change-for mutations')
+            this.$store.commit('CHANGE_TITLE')
+        },
+        ...mapMutations(['CHANGE_TITLE'])
     }
 }
 </script>

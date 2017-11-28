@@ -66,6 +66,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // keep module.id stable when vender modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // split vendor js into its own file
+    // 抽取公共文件
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
       minChunks: function (module, count) {
